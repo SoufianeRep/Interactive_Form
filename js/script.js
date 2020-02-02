@@ -121,9 +121,9 @@ jobDdMenu.addEventListener("change", e => {
 
 //if the slect theme option is selected hides all the tshirts colors options
 if (selectThemeOption.selected) {
-  // for (let i = 0; i < colors.length; i++) {
-  //   colors[i].hidden = true;
-  // }
+  for (let i = 0; i < colors.length; i++) {
+    colors[i].hidden = true;
+  }
   tshirtColorDiv.hidden = true;
 }
 
