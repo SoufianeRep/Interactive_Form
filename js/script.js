@@ -1,8 +1,18 @@
 //Global variables
 const form = document.querySelector("form");
 //Basic Info Variables
+const basicInfoFieldset = form.firstElementChild;
 const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("mail");
+const emailLabel = document.querySelector("label[for='mail']");
+const realTimeMessageDiv = document.createElement("div");
+const realTimeMessage = document.createElement("span");
+basicInfoFieldset.insertBefore(realTimeMessageDiv, emailInput);
+realTimeMessageDiv.appendChild(realTimeMessage);
+realTimeMessage.textContent = `please follow the format "example@domain.com ..."`;
+realTimeMessage.style.color = "red";
+realTimeMessage.hidden = true;
+
 const jobDdMenu = document.getElementById("title");
 const otherOption = jobDdMenu.lastElementChild;
 const otherJobRoleField = document.getElementById("other-title");
@@ -16,7 +26,7 @@ const colorsDdMenu = document.getElementById("color");
 const selectThemeColor = document.createElement("option");
 selectThemeColor.textContent = "Please Select a tshirt theme";
 selectThemeColor.selected = true;
-colorsDdMenu.insertBefore(selectThemeColor, colorsDdMenu.firstChild);
+colorsDdMenu.prepend(selectThemeColor);
 //items in the tshirt color menu
 const colors = colorsDdMenu.children;
 
@@ -46,21 +56,20 @@ const submitBtn = document.querySelector("button");
 
 //regular expressions for important fields
 const name = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
-const eMail = /^([a-z0-9_\-\.]+)@([a-z0-9_\-\.]+)\.([a-z]{2,5})$/i;
+const eMail = /^([a-z0-9_\-\.]+)@([a-z0-9_\-\.]+)\.([a-z]{2,5}[^\s])$/i;
 const cNumber = /^\d{13,16}$/;
 const zipCode = /^\d{5}$/;
 const cvv = /^\d{3}$/;
 
 function inputCheck(input, regex, message, id, e) {
   let match = regex.test(input.value);
+  deleteInvalidMessage(id);
   if (!match) {
     input.style.border = "2px solid rgb(255, 0, 0)";
     createInvalidMessages(message, id);
     e.preventDefault();
-    return false;
   } else {
     input.style.border = null;
-    return true;
   }
 }
 
@@ -71,14 +80,13 @@ function isActivityBoxChecked(e) {
       isChecked = false;
     }
   }
+  deleteInvalidMessage("no-activity");
   if (isChecked) {
     activitiesLegend.style.color = "red";
     createInvalidMessages("*Please choose an activity.", "no-activity");
     e.preventDefault();
-    return false;
   } else {
     activitiesLegend.style.color = null;
-    return true;
   }
 }
 //function setting the default payement option to credit card and hiding the the other options informations;
@@ -107,6 +115,8 @@ function deleteInvalidMessage(id) {
 }
 //set the focus on the name field when the page loads
 nameInput.focus();
+//set credit card payement method as default payement option
+payementDefaultOption();
 
 //hides the other job role field (initially)
 otherJobRoleField.style.display = "none";
@@ -203,13 +213,7 @@ payementMenu.addEventListener("change", e => {
 
 //name validation
 form.addEventListener("submit", e => {
-  deleteInvalidMessage("invalid-name");
-  deleteInvalidMessage("invalid-mail");
   deleteInvalidMessage("invalid-cc");
-  deleteInvalidMessage("invalid-zipcode");
-  deleteInvalidMessage("invalid-cvv");
-  deleteInvalidMessage("no-activity");
-
   if (creditcardOption.selected) {
     //CVV valid input check
     inputCheck(
@@ -223,18 +227,37 @@ form.addEventListener("submit", e => {
     inputCheck(
       zipCodeInput,
       zipCode,
-      "*Please provide a valid Credit Card Number.",
+      "*Please provide a valid Zip Code.",
       "invalid-zipcode",
       e
     );
     //CC number valid input check
-    inputCheck(
-      creditcardInput,
-      cNumber,
-      "*Please provide a valid Credit Card Number",
-      "invalid-cc",
-      e
-    );
+    if (creditcardInput.value == "") {
+      createInvalidMessages(
+        "*No credit card number was provided, please provide a number.",
+        "invalid-cc"
+      );
+      creditcardInput.style.border = "2px solid rgb(255, 0, 0)";
+    } else if (
+      creditcardInput.value.match(/^[0-9]*$/) != null &&
+      (creditcardInput.value.length < 13 || creditcardInput.value.length > 16)
+    ) {
+      createInvalidMessages(
+        "*Please provide a valid Credit Card number between 13 and 16 digits",
+        "invalid-cc"
+      );
+    } else {
+      inputCheck(
+        creditcardInput,
+        cNumber,
+        "*Please provide a valid Credit Card Number, only digits are allowed",
+        "invalid-cc",
+        e
+      );
+    }
+  } else {
+    deleteInvalidMessage("invalid-zipcode");
+    deleteInvalidMessage("invalid-cvv");
   }
   //activity checkboxes input check
   isActivityBoxChecked(e);
@@ -254,4 +277,13 @@ form.addEventListener("submit", e => {
     "invalid-name",
     e
   );
+});
+
+emailInput.addEventListener("keyup", e => {
+  if (!eMail.test(emailInput.value)) {
+    realTimeMessage.hidden = false;
+  } else {
+    realTimeMessage.hidden = true;
+  }
+  console.log("its working");
 });
