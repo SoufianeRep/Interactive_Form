@@ -6,6 +6,7 @@ const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("mail");
 const emailLabel = document.querySelector("label[for='mail']");
 const realTimeMessageDiv = document.createElement("div");
+//creates the real time error message (email in this case)
 const realTimeMessage = document.createElement("span");
 basicInfoFieldset.insertBefore(realTimeMessageDiv, emailInput);
 realTimeMessageDiv.appendChild(realTimeMessage);
@@ -50,9 +51,6 @@ const creditcardOption = document.querySelector('option[value="credit card"]');
 const creditCardDiv = document.getElementById("credit-card");
 const paypalDiv = document.getElementById("paypal");
 const bitcoinDiv = document.getElementById("bitcoin");
-
-//submit button
-const submitBtn = document.querySelector("button");
 
 //regular expressions for important fields
 const name = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
@@ -127,13 +125,13 @@ otherJobRoleField.style.display = "none";
 //makes the other option input field appear when other option is selected else it disapears
 jobDdMenu.addEventListener("change", e => {
   if (e.target.value === "other") {
-    otherJobRoleField.style.display = "";
+    otherJobRoleField.style.display = "block";
   } else {
     otherJobRoleField.style.display = "none";
   }
 });
 
-//if the slect theme option is selected hides all the tshirts colors options
+//if the slect theme option is selected hides the tshirt's colors option
 if (selectThemeOption.selected) {
   tshirtColorDiv.hidden = true;
 }
@@ -283,5 +281,4 @@ emailInput.addEventListener("keyup", e => {
   } else {
     realTimeMessage.hidden = true;
   }
-  console.log("its working");
 });
