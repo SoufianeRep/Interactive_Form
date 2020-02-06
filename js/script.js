@@ -61,6 +61,7 @@ const cNumber = /^\d{13,16}$/;
 const zipCode = /^\d{5}$/;
 const cvv = /^\d{3}$/;
 
+//function that checks if input matches regex of inputs and create error message and also turns the input border to red if not matching
 function inputCheck(input, regex, message, id, e) {
   let match = regex.test(input.value);
   deleteInvalidMessage(id);
@@ -72,15 +73,18 @@ function inputCheck(input, regex, message, id, e) {
     input.style.border = null;
   }
 }
-
+//function to check if any activity is checked and changes the color of the legend accordingly
 function isActivityBoxChecked(e) {
   let isChecked = true;
+  //loops through the avtivity boxes and checks if atleast 1 box is checked
   for (let i = 0; i < activitiesCB.length; i++) {
     if (activitiesCB[i].checked) {
       isChecked = false;
     }
   }
+  //delets any error message (if exists)
   deleteInvalidMessage("no-activity");
+  //if any box is checked changes the color of the legend and displays a message accordingly with ID (as per createInvalidMessage function)
   if (isChecked) {
     activitiesLegend.style.color = "red";
     createInvalidMessages("*Please choose an activity.", "no-activity");
@@ -98,7 +102,7 @@ function payementDefaultOption() {
     bitcoinDiv.hidden = true;
   }
 }
-
+//function to create a invalid message and gives it and Id attribute and appends it accordingly
 function createInvalidMessages(message, id) {
   let p = document.createElement("p");
   form.insertBefore(p, form.firstElementChild);
@@ -106,7 +110,7 @@ function createInvalidMessages(message, id) {
   p.style.color = "red";
   p.id = id;
 }
-
+//function to delete invalid message if any exists
 function deleteInvalidMessage(id) {
   let message = document.getElementById(id);
   if (message) {
@@ -131,9 +135,6 @@ jobDdMenu.addEventListener("change", e => {
 
 //if the slect theme option is selected hides all the tshirts colors options
 if (selectThemeOption.selected) {
-  for (let i = 0; i < colors.length; i++) {
-    colors[i].hidden = true;
-  }
   tshirtColorDiv.hidden = true;
 }
 
@@ -142,11 +143,10 @@ tshirtThemeDdMenu.addEventListener("mouseover", e => {
   selectThemeOption.hidden = true;
 });
 
-//changes
+//changes the slection of tshirt colors according to the theme chosen
 tshirtThemeDdMenu.addEventListener("change", e => {
   tshirtColorDiv.hidden = false;
   for (let i = 0; i < colors.length; i++) {
-    //if the option js puns is selected hides al the non relataed color options as well as
     if (e.target.value === "js puns") {
       colors[i].hidden = false;
       colors[1].selected = true;
@@ -189,8 +189,6 @@ activities.addEventListener("change", e => {
   }
 });
 
-//function setting the default payement option to credit card and hiding the the other options informations;
-
 // event to remove the “Select Payment Method” option when the user opens the menu
 payementMenu.addEventListener("mouseover", e => {
   payementMenu.firstElementChild.hidden = true;
@@ -211,7 +209,7 @@ payementMenu.addEventListener("change", e => {
   }
 });
 
-//name validation
+//displays invalid message on top of the form if any of the input does not meet the criteria or an activity is not chosen
 form.addEventListener("submit", e => {
   deleteInvalidMessage("invalid-cc");
   if (creditcardOption.selected) {
@@ -231,7 +229,7 @@ form.addEventListener("submit", e => {
       "invalid-zipcode",
       e
     );
-    //CC number valid input check
+    //checks if the CC number meets the criteria and displays an error message accordingly at the top of the form if else
     if (creditcardInput.value == "") {
       createInvalidMessages(
         "*No credit card number was provided, please provide a number.",
@@ -278,7 +276,7 @@ form.addEventListener("submit", e => {
     e
   );
 });
-
+//shows the message as soon as the user starts typing and hids it once the email meets the test criteria
 emailInput.addEventListener("keyup", e => {
   if (!eMail.test(emailInput.value)) {
     realTimeMessage.hidden = false;
